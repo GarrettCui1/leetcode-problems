@@ -62,6 +62,99 @@ public class SearchA2dMatrix {
          * 输出：true
          */
 
+        // 两次二分法：
+        //  第一个二分定位行
+        //  第二个二分定位列
+
+        int targetRow = -1;
+
+        // 辅助数组
+        for (int i = 0; i < matrix.length; i++) {
+            int lastOfRow = matrix[i].length - 1;
+            // 每行最后一个值
+            int lastOfRowValue = matrix[i][lastOfRow];
+            // 该行最后一个值大于 target，则 target 在该行
+            if (lastOfRowValue == target) {
+                return true;
+            }
+            if (lastOfRowValue > target) {
+                // 找到 target 所在 row，退出循环
+                targetRow = i;
+                break;
+            }
+        }
+
+        // not matched return false
+        if (targetRow == -1) {
+            return false;
+        }
+
+        for (int i = 0; i < matrix[targetRow].length; i++) {
+            if (matrix[targetRow][i] == target) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 思路：
+     * 时间复杂度：O(m + n)
+     * 空间复杂度：O(1)
+     * 结果:
+     * 优化建议：
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrixV2(int[][] matrix, int target) {
+        /**
+         * 给你一个满足下述两条属性的 m x n 整数矩阵：
+         * 每行中的整数从左到右按非严格递增顺序排列。
+         * 每行的第一个整数大于前一行的最后一个整数。
+         * 给你一个整数 target ，如果 target 在矩阵中，返回 true ；否则，返回 false 。
+         *
+         * 你必须编写一个时间复杂度为 O(log(m * n)) 的解决方案。
+         *
+         * 示例 1：
+         * 输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+         * 输出：true
+         */
+
+        // 两次线性扫描：
+        //  第一个循环定位行
+        //  第二个循环遍历定位列
+
+        int targetRow = -1;
+
+        // 辅助数组
+        for (int i = 0; i < matrix.length; i++) {
+            int lastOfRow = matrix[i].length - 1;
+            // 每行最后一个值
+            int lastOfRowValue = matrix[i][lastOfRow];
+            // 该行最后一个值大于 target，则 target 在该行
+            if (lastOfRowValue == target) {
+                return true;
+            }
+            if (lastOfRowValue > target) {
+                // 找到 target 所在 row，退出循环
+                targetRow = i;
+                break;
+            }
+        }
+
+        // not matched return false
+        if (targetRow == -1) {
+            return false;
+        }
+
+        for (int i = 0; i < matrix[targetRow].length; i++) {
+            if (matrix[targetRow][i] == target) {
+                return true;
+            }
+        }
 
         return false;
     }
