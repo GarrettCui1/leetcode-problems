@@ -38,7 +38,7 @@ public class SearchA2dMatrix {
 
 
     /**
-     * 思路：
+     * 思路：把二维数组当做一维数组看待，找到一维数组下标，再在二维数组中找到值
      * 时间复杂度：O()
      * 空间复杂度：O()
      * 结果:
@@ -62,36 +62,76 @@ public class SearchA2dMatrix {
          * 输出：true
          */
 
-        // 两次二分法：
-        //  第一个二分定位行
-        //  第二个二分定位列
 
-        int targetRow = -1;
+        return false;
+    }
 
-        // 辅助数组
-        for (int i = 0; i < matrix.length; i++) {
-            int lastOfRow = matrix[i].length - 1;
-            // 每行最后一个值
-            int lastOfRowValue = matrix[i][lastOfRow];
-            // 该行最后一个值大于 target，则 target 在该行
-            if (lastOfRowValue == target) {
-                return true;
-            }
-            if (lastOfRowValue > target) {
-                // 找到 target 所在 row，退出循环
-                targetRow = i;
-                break;
+    /**
+     * 【已放弃，思路不对，方向不对，复杂度增加，难度增大】
+     * 思路：两次二分。先找行尾第一个大于等于 target 的行，再在该行查找 target。
+     * 两轮都使用闭区间 [left, right]，区间非空时继续，即 left <= right。
+     * 时间复杂度：O(log m + log n)，即 O(log(m * n))
+     * 空间复杂度：O(1)
+     * 结果:
+     * 优化建议：
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrixV3(int[][] matrix, int target) {
+        /**
+         * 给你一个满足下述两条属性的 m x n 整数矩阵：
+         * 每行中的整数从左到右按非严格递增顺序排列。
+         * 每行的第一个整数大于前一行的最后一个整数。
+         * 给你一个整数 target ，如果 target 在矩阵中，返回 true ；否则，返回 false 。
+         *
+         * 你必须编写一个时间复杂度为 O(log(m * n)) 的解决方案。
+         *
+         * 示例 1：
+         * 输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+         * 输出：true
+         */
+
+        // 第一轮：找行尾第一个 >= target 的行（边界查找，不是查找相等的行尾）。
+        int rowLength = matrix.length;
+        int columnLength = matrix[0].length;
+        int left = 0;
+        int right = rowLength - 1;
+        // 始终保证：left 左侧的行尾都 < target；right 右侧的行尾都 >= target。
+        // [left, right] 中的行尾尚未分类。
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (matrix[mid][columnLength - 1] < target) {
+                // mid 及之前的整行都太小。
+                left = mid + 1;
+            } else {
+                // mid 满足条件，但前面可能还有满足条件的行，继续向左找边界。
+                // 排除的是 mid 的待分类状态，并不是断言 target 不在 mid 行。
+                right = mid - 1;
             }
         }
 
-        // not matched return false
-        if (targetRow == -1) {
+        // 退出时 left == right + 1；left 是第一个行尾 >= target 的行号。
+        // left == rowLength 表示所有行都太小，不能用它访问 matrix。
+        if (left == rowLength) {
             return false;
         }
+        int targetRow = left;
 
-        for (int i = 0; i < matrix[targetRow].length; i++) {
-            if (matrix[targetRow][i] == target) {
+        // 第二轮：在候选行的闭区间 [left, right] 中查找相等的元素。
+        // 若 target 存在，它一定在这个区间中；区间为空时说明不存在。
+        left = 0;
+        right = columnLength - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int value = matrix[targetRow][mid];
+            if (value == target) {
                 return true;
+            } else if (value < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
             }
         }
 

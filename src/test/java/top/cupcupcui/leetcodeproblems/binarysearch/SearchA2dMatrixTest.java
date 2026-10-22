@@ -5,6 +5,35 @@ import org.junit.Test;
 
 public class SearchA2dMatrixTest {
 
+    @Test
+    public void test_MiddleRowInteriorMustNotBeSkipped() {
+        SearchA2dMatrix service = new SearchA2dMatrix();
+        int[][] matrix = {{1, 3, 5, 7}, {10, 11, 16, 20}, {23, 30, 34, 60}};
+
+        Assert.assertTrue(service.searchMatrix(matrix, 10));
+        Assert.assertTrue(service.searchMatrix(matrix, 11));
+        Assert.assertTrue(service.searchMatrix(matrix, 16));
+    }
+
+    @Test
+    public void test_AboveEveryRowEnd() {
+        SearchA2dMatrix service = new SearchA2dMatrix();
+        int[][] matrix = {{1, 3}, {5, 7}, {9, 11}};
+
+        Assert.assertFalse(service.searchMatrix(matrix, 12));
+        Assert.assertFalse(service.searchMatrix(new int[][]{{1}}, 2));
+    }
+
+    @Test
+    public void test_CandidateRowDoesNotGuaranteeMatch() {
+        SearchA2dMatrix service = new SearchA2dMatrix();
+        int[][] matrix = {{1, 3, 5, 7}, {10, 11, 16, 20}, {23, 30, 34, 60}};
+
+        Assert.assertFalse(service.searchMatrix(matrix, 9));
+        Assert.assertFalse(service.searchMatrix(matrix, 13));
+        Assert.assertFalse(service.searchMatrix(matrix, 0));
+    }
+
     /**
      * 输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
      * 输出：true
