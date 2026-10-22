@@ -38,15 +38,14 @@ public class SearchA2dMatrix {
 
 
     /**
-     * 思路：把二维数组当做一维数组看待，找到一维数组下标，再在二维数组中找到值
-     * 时间复杂度：O(n)
+     * 思路：矩阵按行展开后整体有序，对虚拟一维下标进行二分查找，无需创建新数组。
+     * 每轮通过除法和取余，将中间下标映射到矩阵中的行、列，再读取元素进行比较。
+     * 时间复杂度：O(log(m * n))，m 为行数，n 为列数；每轮 O(1)，查找范围约减半。
      * 空间复杂度：O(1)
-     * 结果:
-     * 优化建议：
      *
-     * @param matrix
-     * @param target
-     * @return
+     * @param matrix 满足题目排序条件的非空矩阵
+     * @param target 目标值
+     * @return 目标值是否存在于矩阵中
      */
     public boolean searchMatrix(int[][] matrix, int target) {
         /**
@@ -62,17 +61,17 @@ public class SearchA2dMatrix {
          * 输出：true
          */
 
-        // 把二维数组转为一个虚拟的一维数组
-        // int[] vMatrix = new int[n * m];
+        // 将矩阵看作有序的一维数组，只计算下标，不复制元素。
         int rowLength = matrix.length;
         int columnLength = matrix[0].length;
         int vMatrixLength = rowLength * columnLength;
         int left = 0;
         int right = vMatrixLength - 1;
-        // 这里应该是 < 还是 <= ?
+        // 若 target 存在，它的一维下标一定在闭区间 [left, right] 中。
+        // left == right 时仍有一个元素需要检查，因此使用 <=。
         while (left <= right) {
-            // 如何根据 mid 计算 row 和 column？
             int mid = left + (right - left) / 2;
+            // 每行 columnLength 个元素：商是行号，余数是列号，二者都从 0 开始。
             int row = mid / columnLength;
             int column = mid % columnLength;
             int midValue = matrix[row][column];
@@ -80,17 +79,21 @@ public class SearchA2dMatrix {
             if (target == midValue) {
                 return true;
             } else if (target < midValue) {
+                // mid 及其右侧的元素都太大，排除后继续向左查找。
                 right = mid - 1;
             } else {
+                // mid 及其左侧的元素都太小，排除后继续向右查找。
                 left = mid + 1;
             }
         }
 
+        // left > right，候选区间为空，说明目标不存在。
         return false;
     }
 
     /**
-     * 【已放弃，思路不对，方向不对，复杂度增加，难度增大】
+     * 备选方案：两次二分也满足题目要求，与整体二分的时间复杂度等价。
+     * 当前主方法采用整体二分，统一查找区间的含义，便于理解边界。
      * 思路：两次二分。先找行尾第一个大于等于 target 的行，再在该行查找 target。
      * 两轮都使用闭区间 [left, right]，区间非空时继续，即 left <= right。
      * 时间复杂度：O(log m + log n)，即 O(log(m * n))
