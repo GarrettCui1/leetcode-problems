@@ -39,8 +39,8 @@ public class SearchA2dMatrix {
 
     /**
      * 思路：把二维数组当做一维数组看待，找到一维数组下标，再在二维数组中找到值
-     * 时间复杂度：O()
-     * 空间复杂度：O()
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
      * 结果:
      * 优化建议：
      *
@@ -62,6 +62,29 @@ public class SearchA2dMatrix {
          * 输出：true
          */
 
+        // 把二维数组转为一个虚拟的一维数组
+        // int[] vMatrix = new int[n * m];
+        int rowLength = matrix.length;
+        int columnLength = matrix[0].length;
+        int vMatrixLength = rowLength * columnLength;
+        int left = 0;
+        int right = vMatrixLength - 1;
+        // 这里应该是 < 还是 <= ?
+        while (left <= right) {
+            // 如何根据 mid 计算 row 和 column？
+            int mid = left + (right - left) / 2;
+            int row = mid / columnLength;
+            int column = mid % columnLength;
+            int midValue = matrix[row][column];
+
+            if (target == midValue) {
+                return true;
+            } else if (target < midValue) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
 
         return false;
     }
