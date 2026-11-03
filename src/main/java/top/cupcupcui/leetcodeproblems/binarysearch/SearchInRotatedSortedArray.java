@@ -49,14 +49,88 @@ public class SearchInRotatedSortedArray {
      * 1.暴力解法，遍历数组，查找元素，时间复杂度O(n)
      * 2.先找到旋转点坐标，把数组分为左右两部分，分别在两部分做二分法
      * 3.先找到旋转点坐标，把数组还原为旋转前的数组，二分法求解
-     * 时间复杂度：O()
-     * 空间复杂度：O()
+     */
+
+
+    /**
+     * 思路：
+     * 先找到旋转点坐标，把数组分为左右两部分，在元素所在半区间做遍历搜索
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
      *
      * @param nums
      * @param target
      * @return
      */
-    public int search(int[] nums, int target) {
+    public int searchV2(int[] nums, int target) {
+        /**
+         * 输入：nums = [4,5,6,7,0,1,2], target = 0
+         * 输出：4
+         * 输入：nums = [1,2,4,5,6,7,0], target = 0
+         * 输出：4
+         */
+
+        if (nums.length == 1) {
+            if (nums[0] == target) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+
+        // 左侧最大值下标，时间复杂度O(n)
+        int leftMaxIndex = -1;
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] > nums[i + 1]) {
+                leftMaxIndex = i;
+            }
+        }
+
+        int left;
+        int right;
+        if (leftMaxIndex == -1) {
+            left = 0;
+            right = nums.length - 1;
+        } else if (nums[0] <= target && target <= nums[leftMaxIndex]) {
+            // 在 [0,leftMaxIndex] 区间二分查找
+            left = 0;
+            right = leftMaxIndex;
+        } else {
+            // 在 [leftMaxIndex,nums.length-1] 区间二分查找
+            left = leftMaxIndex + 1;
+            right = nums.length - 1;
+        }
+
+        // 在 left,right 区间内二分查找，时间复杂度O(n)
+        for (int i = left; i <= right; i++) {
+            if (nums[i] == target) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * 思路：
+     * 1.暴力解法，遍历数组，查找元素，时间复杂度O(n)
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchV1(int[] nums, int target) {
+        /**
+         * 输入：nums = [4,5,6,7,0,1,2], target = 0
+         * 输出：4
+         */
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] == target) {
+                return i;
+            }
+        }
 
         return -1;
     }
