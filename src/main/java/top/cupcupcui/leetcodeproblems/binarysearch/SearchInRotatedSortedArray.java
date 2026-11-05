@@ -54,6 +54,116 @@ public class SearchInRotatedSortedArray {
 
     /**
      * 思路：
+     * 确定一个中间点 mid，在[left, mid]区间或[mid+1, right]区间，至少有一个区间是有序的，如果target落在有序区间，则在有序区间二分查找；如果target落在无序区间，则重复上一步；
+     * 如果[left, mid]区间有序、[mid+1, right]区间无序，
+     *  如果target在[left, mid]有序区间内，则二分查找；
+     *  如果target在[mid+1, right]无序区间内，则重复上一步骤；
+     * 退出条件：left<=right
+     * 时间复杂度：O()
+     * 空间复杂度：O()
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int search(int[] nums, int target) {
+        /**
+         * 输入：nums = [4,5,6,7,0,1,2], target = 0
+         * 输出：4
+         */
+
+        return -1;
+    }
+
+    /**
+     * 思路：
+     * 先找到旋转点坐标，把数组分为左右两部分，在元素所在半区间做二分遍历搜索
+     * 放弃这个思路，这个思路不够好，复杂度高，不容易理解，根据codex提示，更换另一个思路解法
+     * 时间复杂度：O()
+     * 空间复杂度：O()
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchV3(int[] nums, int target) {
+        /**
+         * 输入：nums = [4,5,6,7,0,1,2], target = 0
+         * 输出：4
+         */
+
+        if (nums.length == 1) {
+            if (nums[0] == target) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+
+        int leftMaxIndex = -1;
+        // 先找到旋转点坐标，即在无序数组中找数组中的最小值（或最大值）
+        // 根据 ChatGPT 的提示：
+        //  二分法，在[left, right]区间内,比较选中的中间值 midV 和区间最右侧值 rightV，
+        //  如果 midV > rightV,在[mid, right]区间中继续二分查找
+        //  如果 midV < rightV,在[left, mid]区间中继续二分查找
+        //  如果 left <= right,continue
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] == nums[right]) {
+                left = mid;
+            } else if (nums[mid] > nums[right]) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+
+        leftMaxIndex = left;
+
+        if (nums[0] < nums[nums.length - 1]) {
+            // 原始数组按升序排列
+            leftMaxIndex = -1;
+        }
+
+
+        // 左侧最大值下标，遍历所有元素，时间复杂度O(n)
+        // TODO: refactor me，优化为时间复杂度O(logn)
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] > nums[i + 1]) {
+                leftMaxIndex = i;
+            }
+        }
+
+        // int left;
+        // int right;
+        // if (leftMaxIndex == -1) {
+        //     left = 0;
+        //     right = nums.length - 1;
+        // } else if (nums[0] <= target && target <= nums[leftMaxIndex]) {
+        //     // 在 [0,leftMaxIndex] 区间二分查找
+        //     left = 0;
+        //     right = leftMaxIndex;
+        // } else {
+        //     // 在 [leftMaxIndex,nums.length-1] 区间二分查找
+        //     left = leftMaxIndex + 1;
+        //     right = nums.length - 1;
+        // }
+        //
+        // // 在 left,right 区间内二分查找，时间复杂度O(n)
+        // for (int i = left; i <= right; i++) {
+        //     if (nums[i] == target) {
+        //         return i;
+        //     }
+        // }
+
+        return -1;
+    }
+
+
+    /**
+     * 思路：
      * 先找到旋转点坐标，把数组分为左右两部分，在元素所在半区间做遍历搜索
      * 时间复杂度：O(n)
      * 空间复杂度：O(1)
@@ -65,8 +175,6 @@ public class SearchInRotatedSortedArray {
     public int searchV2(int[] nums, int target) {
         /**
          * 输入：nums = [4,5,6,7,0,1,2], target = 0
-         * 输出：4
-         * 输入：nums = [1,2,4,5,6,7,0], target = 0
          * 输出：4
          */
 
@@ -92,16 +200,16 @@ public class SearchInRotatedSortedArray {
             left = 0;
             right = nums.length - 1;
         } else if (nums[0] <= target && target <= nums[leftMaxIndex]) {
-            // 在 [0,leftMaxIndex] 区间二分查找
+            // 在 [0,leftMaxIndex] 区间遍历搜索
             left = 0;
             right = leftMaxIndex;
         } else {
-            // 在 [leftMaxIndex,nums.length-1] 区间二分查找
+            // 在 [leftMaxIndex,nums.length-1] 区间遍历搜索
             left = leftMaxIndex + 1;
             right = nums.length - 1;
         }
 
-        // 在 left,right 区间内二分查找，时间复杂度O(n)
+        // 在 left,right 区间内遍历搜索，时间复杂度O(n)
         for (int i = left; i <= right; i++) {
             if (nums[i] == target) {
                 return i;
